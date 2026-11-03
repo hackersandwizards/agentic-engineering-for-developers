@@ -1,0 +1,281 @@
+"use client";
+
+import {
+  Box,
+  Button,
+  Field,
+  Heading,
+  Input,
+  Stack,
+  Tabs,
+  Text,
+} from "@chakra-ui/react";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { useState, useEffect } from "react";
+import { UsersApi } from "@/lib/client/api";
+import { useAuth } from "@/lib/client/useAuth";
+import { emailRules, passwordRules } from "@/lib/validation";
+import { queryKeys } from "@/lib/client/queryKeys";
+import { useMutationWithInvalidation } from "@/lib/client/useMutationWithInvalidation";
+import { GenericDeleteDialog } from "@/components/GenericDeleteDialog";
+
+interface UserInfoFormData {
+  email: string;
+  full_name: string;
+}
+
+interface PasswordFormData {
+  current_password: string;
+  new_password: string;
+  confirm_password: string;
+}
+
+export default function SettingsPage() {
+  const { user, logout } = useAuth();
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const userInfoForm = useForm<UserInfoFormData>({
+    defaultValues: {
+      email: user?.email || "",
+      full_name: user?.fullName || "",
+    },
+  });
+
+  useEffect(() => {
+    if (user) {
+      userInfoForm.reset({
+        email: user.email,
+        full_name: user.fullName || "",
+      });
+    }
+  }, [user, userInfoForm]);
+
+  const updateUserMutation = useMutationWithInvalidation({
+    invalidateKey: queryKeys.currentUser,
+    mutationFn: (data: UserInfoFormData) => UsersApi.updateMe(data),
+  });
+
+  const passwordForm = useForm<PasswordFormData>();
+
+  const changePasswordMutation = useMutation({
+    mutationFn: (data: { current_password: string; new_password: string }) =>
+      UsersApi.changePassword(data),
+    onSuccess: () => {
+      passwordForm.reset();
+    },
+  });
+
+  return (
+    <Box>
+      <Stack gap={6}>
+        <Heading as="h1" size="2xl">
+          Settings
+        </Heading>
+
+        <Tabs.Root defaultValue="profile" colorPalette="teal">
+          <Tabs.List>
+            <Tabs.Trigger value="profile">Profile</Tabs.Trigger>
+            <Tabs.Trigger value="password">Password</Tabs.Trigger>
+            <Tabs.Trigger value="danger">Delete account</Tabs.Trigger>
+          </Tabs.List>
+
+          <Tabs.Content value="profile">
+            <Box
+              bg="bg.panel"
+              p={6}
+              borderWidth="1px"
+              borderRadius="l3"
+              boxShadow="sm"
+              mt={4}
+            >
+              <form
+                onSubmit={userInfoForm.handleSubmit((data) =>
+                  updateUserMutation.mutate(data),
+                )}
+              >
+                <Stack gap={4} maxW="md">
+                  <Field.Root invalid={!!userInfoForm.formState.errors.email}>
+                    <Field.Label>Email</Field.Label>
+                    <Input {...userInfoForm.register("email", emailRules)} />
+                    {userInfoForm.formState.errors.email && (
+                      <Field.ErrorText>
+                        {userInfoForm.formState.errors.email.message}
+                      </Field.ErrorText>
+                    )}
+                  </Field.Root>
+
+                  <Field.Root>
+                    <Field.Label>Full name</Field.Label>
+                    <Input {...userInfoForm.register("full_name")} />
+                  </Field.Root>
+
+                  {updateUserMutation.isError && (
+                    <Text color="fg.error" fontSize="sm">
+                      {(updateUserMutation.error as Error).message}
+                    </Text>
+                  )}
+
+                  {updateUserMutation.isSuccess && (
+                    <Text color="fg.success" fontSize="sm">
+                      Profile updated successfully!
+                    </Text>
+                  )}
+
+                  <Button
+                    type="submit"
+                    colorPalette="teal"
+                    alignSelf="flex-start"
+                    loading={updateUserMutation.isPending}
+                  >
+                    Save changes
+                  </Button>
+                </Stack>
+              </form>
+            </Box>
+          </Tabs.Content>
+
+          <Tabs.Content value="password">
+            <Box
+              bg="bg.panel"
+              p={6}
+              borderWidth="1px"
+              borderRadius="l3"
+              boxShadow="sm"
+              mt={4}
+            >
+              <form
+                onSubmit={passwordForm.handleSubmit((data) =>
+                  changePasswordMutation.mutate({
+                    current_password: data.current_password,
+                    new_password: data.new_password,
+                  }),
+                )}
+              >
+                <Stack gap={4} maxW="md">
+                  <Field.Root
+                    invalid={!!passwordForm.formState.errors.current_password}
+                  >
+                    <Field.Label>Current password</Field.Label>
+                    <Input
+                      type="password"
+                      {...passwordForm.register("current_password", {
+                        required: "Current password is required",
+                      })}
+                    />
+                    {passwordForm.formState.errors.current_password && (
+                      <Field.ErrorText>
+                        {passwordForm.formState.errors.current_password.message}
+                      </Field.ErrorText>
+                    )}
+                  </Field.Root>
+
+                  <Field.Root
+                    invalid={!!passwordForm.formState.errors.new_password}
+                  >
+                    <Field.Label>New password</Field.Label>
+                    <Input
+                      type="password"
+                      {...passwordForm.register("new_password", passwordRules)}
+                    />
+                    {passwordForm.formState.errors.new_password && (
+                      <Field.ErrorText>
+                        {passwordForm.formState.errors.new_password.message}
+                      </Field.ErrorText>
+                    )}
+                  </Field.Root>
+
+                  <Field.Root
+                    invalid={!!passwordForm.formState.errors.confirm_password}
+                  >
+                    <Field.Label>Confirm new password</Field.Label>
+                    <Input
+                      type="password"
+                      {...passwordForm.register("confirm_password", {
+                        required: "Please confirm your password",
+                        validate: (value) =>
+                          value === passwordForm.getValues("new_password") ||
+                          "Passwords do not match",
+                      })}
+                    />
+                    {passwordForm.formState.errors.confirm_password && (
+                      <Field.ErrorText>
+                        {passwordForm.formState.errors.confirm_password.message}
+                      </Field.ErrorText>
+                    )}
+                  </Field.Root>
+
+                  {changePasswordMutation.isError && (
+                    <Text color="fg.error" fontSize="sm">
+                      {(changePasswordMutation.error as Error).message}
+                    </Text>
+                  )}
+
+                  {changePasswordMutation.isSuccess && (
+                    <Text color="fg.success" fontSize="sm">
+                      Password changed successfully!
+                    </Text>
+                  )}
+
+                  <Button
+                    type="submit"
+                    colorPalette="teal"
+                    alignSelf="flex-start"
+                    loading={changePasswordMutation.isPending}
+                  >
+                    Change password
+                  </Button>
+                </Stack>
+              </form>
+            </Box>
+          </Tabs.Content>
+
+          <Tabs.Content value="danger">
+            <Box
+              bg="bg.panel"
+              p={6}
+              borderWidth="1px"
+              borderRadius="l3"
+              boxShadow="sm"
+              mt={4}
+            >
+              <Stack gap={4}>
+                <Heading size="md" color="fg.error">
+                  Delete account
+                </Heading>
+                <Text color="fg.muted">
+                  Once you delete your account, there is no going back. Please
+                  be certain.
+                </Text>
+                {user?.isSuperuser ? (
+                  <Text color="fg.muted" fontSize="sm">
+                    Super users cannot delete their own account.
+                  </Text>
+                ) : (
+                  <Button
+                    colorPalette="red"
+                    variant="outline"
+                    alignSelf="flex-start"
+                    onClick={() => setDeleteOpen(true)}
+                  >
+                    Delete my account
+                  </Button>
+                )}
+              </Stack>
+            </Box>
+          </Tabs.Content>
+        </Tabs.Root>
+      </Stack>
+
+      <GenericDeleteDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        title="Delete account"
+        description="Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed."
+        confirmLabel="Delete account"
+        onDelete={() => UsersApi.deleteMe()}
+        onSuccess={logout}
+      />
+    </Box>
+  );
+}

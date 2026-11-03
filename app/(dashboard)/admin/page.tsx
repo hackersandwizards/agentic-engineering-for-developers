@@ -1,0 +1,137 @@
+"use client";
+
+import { Badge, Box, Flex, Heading, Stack, Table } from "@chakra-ui/react";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { UsersApi, type UserPublic } from "@/lib/client/api";
+import { useAuth } from "@/lib/client/useAuth";
+import { AddUserDialog } from "@/components/admin/AddUserDialog";
+import { EditUserDialog } from "@/components/admin/EditUserDialog";
+import { DeleteUserDialog } from "@/components/admin/DeleteUserDialog";
+import { DataTable } from "@/components/DataTable";
+import { RowActionsMenu } from "@/components/RowActionsMenu";
+import { queryKeys } from "@/lib/client/queryKeys";
+import {
+  usePagination,
+  useClampPage,
+  PAGE_SIZE,
+} from "@/lib/client/usePagination";
+
+export default function AdminPage() {
+  const router = useRouter();
+  const { user: currentUser } = useAuth();
+  const { page, setPage, skip, limit, prev, next } = usePagination();
+  const [editUser, setEditUser] = useState<UserPublic | null>(null);
+  const [deleteUser, setDeleteUser] = useState<UserPublic | null>(null);
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: queryKeys.usersPage(page),
+    queryFn: () => UsersApi.list(skip, limit),
+    enabled: !!currentUser?.isSuperuser,
+    placeholderData: keepPreviousData,
+  });
+
+  const users = data?.data || [];
+  const totalCount = data?.count || 0;
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+
+  useEffect(() => {
+    if (currentUser && !currentUser.isSuperuser) {
+      router.push("/");
+    }
+  }, [currentUser, router]);
+
+  useClampPage(page, totalPages, setPage);
+
+  if (!currentUser || !currentUser.isSuperuser) {
+    return null;
+  }
+
+  return (
+    <Box>
+      <Stack gap={6}>
+        <Flex justify="space-between" align="center">
+          <Heading as="h1" size="2xl">
+            Users
+          </Heading>
+          <AddUserDialog />
+        </Flex>
+
+        <DataTable
+          columns={[
+            { header: "Name" },
+            { header: "Email", hideOnPhone: true },
+            { header: "Role" },
+            { header: "Status" },
+            { header: "Actions", width: "80px" },
+          ]}
+          items={users}
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
+          errorMessage="Failed to load users"
+          emptyMessage="No users found."
+          page={page}
+          totalPages={totalPages}
+          onPrev={prev}
+          onNext={() => next(totalPages)}
+          renderRow={(user) => (
+            <>
+              <Table.Cell fontWeight="medium">
+                <Flex align="center" gap={2}>
+                  {user.fullName || "-"}
+                  {user.id === currentUser?.id && (
+                    <Badge colorPalette="teal" size="sm">
+                      You
+                    </Badge>
+                  )}
+                </Flex>
+              </Table.Cell>
+              <Table.Cell color="fg.muted" hideBelow="md">
+                {user.email}
+              </Table.Cell>
+              <Table.Cell>
+                <Badge colorPalette={user.isSuperuser ? "purple" : "gray"}>
+                  {user.isSuperuser ? "Admin" : "User"}
+                </Badge>
+              </Table.Cell>
+              <Table.Cell>
+                <Badge colorPalette={user.isActive ? "green" : "red"}>
+                  {user.isActive ? "Active" : "Inactive"}
+                </Badge>
+              </Table.Cell>
+              <Table.Cell>
+                <RowActionsMenu
+                  label={user.fullName || user.email}
+                  onEdit={() => setEditUser(user)}
+                  onDelete={
+                    user.id !== currentUser?.id
+                      ? () => setDeleteUser(user)
+                      : undefined
+                  }
+                />
+              </Table.Cell>
+            </>
+          )}
+        />
+      </Stack>
+
+      {editUser && (
+        <EditUserDialog
+          user={editUser}
+          open={!!editUser}
+          onOpenChange={(open) => !open && setEditUser(null)}
+        />
+      )}
+
+      {deleteUser && (
+        <DeleteUserDialog
+          user={deleteUser}
+          open={!!deleteUser}
+          onOpenChange={(open) => !open && setDeleteUser(null)}
+        />
+      )}
+    </Box>
+  );
+}
