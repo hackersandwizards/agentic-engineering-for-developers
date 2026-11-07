@@ -30,12 +30,6 @@ dist
 .eslintcache
 tsconfig.tsbuildinfo
 
-# Test
-coverage
-playwright-report
-test-results
-/.playwright
-
 # Misc
 *.log
 .DS_Store
@@ -44,6 +38,3 @@ test-results
 *.db
 *.db-journal
 prisma/dev.db
-
-# Claude Code
-.claude/scheduled_tasks.lock

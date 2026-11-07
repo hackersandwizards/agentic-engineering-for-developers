@@ -5,9 +5,6 @@ import "./brand.css";
 export const metadata: Metadata = {
   title: "CRM - Contact Management",
   description: "Contact relationship management application",
-  icons: {
-    icon: "/favicon.ico",
-  },
 };
 
 export default function RootLayout({

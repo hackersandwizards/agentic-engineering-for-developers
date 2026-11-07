@@ -38,7 +38,7 @@ export default function LoginPage() {
     <Stack gap={8}>
       <ProductMark />
       <Box>
-        <Heading as="h1" fontFamily="body" fontSize="2xl" fontWeight="semibold">
+        <Heading as="h1" fontSize="2xl" fontWeight="semibold">
           Sign in
         </Heading>
         <Text color="fg.muted" mt={2}>

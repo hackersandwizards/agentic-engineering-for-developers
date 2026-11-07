@@ -1,9 +1,5 @@
 const API_BASE = "/api/v1";
 
-export interface ApiError {
-  detail: string;
-}
-
 export interface UserPublic {
   id: string;
   email: string;

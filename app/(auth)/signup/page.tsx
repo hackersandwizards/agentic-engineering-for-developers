@@ -45,7 +45,7 @@ export default function SignupPage() {
     <Stack gap={8}>
       <ProductMark />
       <Box>
-        <Heading as="h1" fontFamily="body" fontSize="2xl" fontWeight="semibold">
+        <Heading as="h1" fontSize="2xl" fontWeight="semibold">
           Create an account
         </Heading>
         <Text color="fg.muted" mt={2}>
