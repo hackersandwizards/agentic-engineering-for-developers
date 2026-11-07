@@ -17,6 +17,8 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Static files in public/ (the logos) stay reachable before sign-in.
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\.svg$).*)"],
+  // The logos in public/ and the app icons stay reachable before sign-in.
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|apple-icon.png|.*\\.svg$).*)",
+  ],
 };
