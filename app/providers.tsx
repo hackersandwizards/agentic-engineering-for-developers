@@ -73,7 +73,6 @@ const system = createSystem(defaultConfig, {
         red: palette("var(--error)"),
         green: palette("var(--success)"),
         purple: palette("var(--hue-purple)"),
-        gray: palette("var(--hue-slate)"),
       },
     },
   },

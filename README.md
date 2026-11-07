@@ -12,7 +12,7 @@ TypeScript 6 in strict mode.
 ## Run it
 
 You need Node.js 22 (22.22.2 or newer), 24 (24.15 or newer) or 26, the range
-every dependency accepts (checked on 2026-10-31 with Node 26 and npm 12). The repo uses npm, and
+every dependency accepts (checked on 2026-11-07 with Node 26 and npm 12). The repo uses npm, and
 `package-lock.json` is its lockfile.
 
 ```bash
@@ -39,9 +39,9 @@ seeded superuser. Never reuse it for a real deployment.
 
 ## Check your work
 
-`npm run lint` runs ESLint (Next.js core web vitals and TypeScript rules), and
-`npm run build` builds the app and type-checks it. Dependencies are pinned
-exactly.
+`npm run lint` runs ESLint (Next.js core web vitals and TypeScript rules),
+`npx tsc --noEmit` checks the types, and `npm run build` builds the app.
+`package.json` pins every dependency to an exact version.
 
 ## Where things are
 

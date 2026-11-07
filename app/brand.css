@@ -48,7 +48,6 @@
   --error: color-mix(in srgb, #dc2626 70%, #19283a);
   --success: color-mix(in srgb, #15803d 70%, #19283a);
   --hue-purple: color-mix(in srgb, #9333ea 70%, #19283a);
-  --hue-slate: #545861;
   --backdrop: color-mix(in srgb, #19283a 40%, transparent);
 }
 
@@ -67,7 +66,6 @@
     --error: #f26969;
     --success: #4ade80;
     --hue-purple: #b97af1;
-    --hue-slate: #b0b5c4;
     --backdrop: color-mix(in srgb, black 70%, transparent);
   }
 }
