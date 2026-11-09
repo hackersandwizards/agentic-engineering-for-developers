@@ -1,6 +1,7 @@
 /* hackers&wizards brand, copied from @hackersandwizards/brand 1.64.0
    (tokens/tokens.css and expert/expert.css), compared on 2026-11-09. A copy, so
-   the repo installs without the brand package: edit it here.
+   the repo installs without the brand package: edit it here. expert.css's
+   invalid field line is in app/providers.tsx, as a Chakra recipe.
    Also copied from 1.64.0: app/fonts (tokens/fonts, SIL Open Font License),
    public/wordmark*.svg, app/favicon.ico, app/icon.svg (logos/favicon.svg) and
    app/apple-icon.png (logos/apple-touch-icon.png). */

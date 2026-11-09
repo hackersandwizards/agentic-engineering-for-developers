@@ -18,13 +18,18 @@ const palette = (fg: string, solid = fg, contrast = "var(--on-accent)") => ({
 });
 
 // A field's edge needs 3:1 (WCAG 1.4.11); the hairline border has 1.4:1. An
-// invalid field draws its line twice as thick in the error red.
+// invalid field draws its line twice as thick in the error red; focused, the
+// focus ring takes over.
 const field = {
   variants: {
     variant: {
       outline: {
         borderColor: "border.emphasized",
-        _invalid: { boxShadow: "inset 0 0 0 1px var(--error)" },
+        _invalid: {
+          "&:not(:focus)": {
+            boxShadow: "inset 0 0 0 1px var(--error-color)",
+          },
+        },
       },
     },
   },
