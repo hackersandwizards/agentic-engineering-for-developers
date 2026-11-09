@@ -17,6 +17,19 @@ const palette = (fg: string, solid = fg, contrast = "var(--on-accent)") => ({
   border: { value: solid },
 });
 
+// A field's edge needs 3:1 (WCAG 1.4.11); the hairline border has 1.4:1. An
+// invalid field draws its line twice as thick in the error red.
+const field = {
+  variants: {
+    variant: {
+      outline: {
+        borderColor: "border.emphasized",
+        _invalid: { boxShadow: "inset 0 0 0 1px var(--error)" },
+      },
+    },
+  },
+};
+
 const system = createSystem(defaultConfig, {
   // Light or dark follows the operating system (Apple HIG, Dark Mode).
   conditions: {
@@ -24,19 +37,7 @@ const system = createSystem(defaultConfig, {
     dark: "@media (prefers-color-scheme: dark)",
   },
   theme: {
-    // A field's edge needs 3:1 (WCAG 1.4.11); the hairline border has 1.4:1.
-    recipes: {
-      input: {
-        variants: {
-          variant: { outline: { borderColor: "border.emphasized" } },
-        },
-      },
-      textarea: {
-        variants: {
-          variant: { outline: { borderColor: "border.emphasized" } },
-        },
-      },
-    },
+    recipes: { input: field, textarea: field },
     tokens: {
       fonts: {
         heading: { value: "var(--font-mono)" },
