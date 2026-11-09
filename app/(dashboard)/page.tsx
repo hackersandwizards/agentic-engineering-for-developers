@@ -18,13 +18,7 @@ export default function DashboardPage() {
         </Text>
       </Box>
 
-      <Box
-        bg="bg.panel"
-        p={6}
-        borderWidth="1px"
-        borderRadius="l3"
-        boxShadow="sm"
-      >
+      <Box layerStyle="block" p={6}>
         <Heading as="h2" size="md" mb={2}>
           Contacts
         </Heading>

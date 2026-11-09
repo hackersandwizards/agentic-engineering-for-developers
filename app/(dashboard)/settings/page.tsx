@@ -81,14 +81,7 @@ export default function SettingsPage() {
           </Tabs.List>
 
           <Tabs.Content value="profile">
-            <Box
-              bg="bg.panel"
-              p={6}
-              borderWidth="1px"
-              borderRadius="l3"
-              boxShadow="sm"
-              mt={4}
-            >
+            <Box layerStyle="block" p={6} mt={4}>
               <form
                 onSubmit={userInfoForm.handleSubmit((data) =>
                   updateUserMutation.mutate(data),
@@ -136,14 +129,7 @@ export default function SettingsPage() {
           </Tabs.Content>
 
           <Tabs.Content value="password">
-            <Box
-              bg="bg.panel"
-              p={6}
-              borderWidth="1px"
-              borderRadius="l3"
-              boxShadow="sm"
-              mt={4}
-            >
+            <Box layerStyle="block" p={6} mt={4}>
               <form
                 onSubmit={passwordForm.handleSubmit((data) =>
                   changePasswordMutation.mutate({
@@ -231,14 +217,7 @@ export default function SettingsPage() {
           </Tabs.Content>
 
           <Tabs.Content value="danger">
-            <Box
-              bg="bg.panel"
-              p={6}
-              borderWidth="1px"
-              borderRadius="l3"
-              boxShadow="sm"
-              mt={4}
-            >
+            <Box layerStyle="block" p={6} mt={4}>
               <Stack gap={4}>
                 <Heading size="md" color="fg.error">
                   Delete account

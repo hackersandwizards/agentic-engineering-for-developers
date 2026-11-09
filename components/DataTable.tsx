@@ -43,13 +43,7 @@ export function DataTable<T extends { id: string }>({
   const colSpan = columns.length;
 
   return (
-    <Box
-      bg="bg.panel"
-      borderWidth="1px"
-      borderRadius="l3"
-      boxShadow="sm"
-      overflow="hidden"
-    >
+    <Box layerStyle="block" overflow="hidden">
       <Box overflowX="auto">
         <Table.Root>
           <Table.Header>
