@@ -7,7 +7,7 @@ work in it with your coding agent for both days.
 It is a small CRM: login and signup, contacts, user administration for a
 superuser, profile settings and a REST API. Built with Next.js 16 (App Router),
 React 19, Chakra UI 3, TanStack Query, React Hook Form, Prisma 7 on SQLite and
-TypeScript 6 in strict mode.
+TypeScript 7 in strict mode.
 
 ## Run it
 
@@ -40,7 +40,9 @@ seeded superuser. Never reuse it for a real deployment.
 ## Check your work
 
 `npm run lint` runs ESLint (Next.js core web vitals and TypeScript rules),
-`npx tsc --noEmit` checks the types, and `npm run build` builds the app.
+`npm run typecheck` checks the types with TypeScript 7. `npm run build` builds
+the app, then runs the same TypeScript 7 check. ESLint and Next.js use the
+TypeScript 6 compatibility package for now.
 `package.json` pins every dependency to an exact version.
 
 ## Where things are
